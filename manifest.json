@@ -1,0 +1,15 @@
+{
+  "name": "BabySchlaf.at",
+  "short_name": "BabySchlaf",
+  "description": "Wissenschaftlich fundierter Schlaf-Tracker für Babys. Made in Austria.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F0E6D8",
+  "theme_color": "#F0E6D8",
+  "orientation": "portrait",
+  "lang": "de-AT",
+  "icons": [
+    {"src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}
