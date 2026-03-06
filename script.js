@@ -1,811 +1,3 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#F0E6D8" id="theme-meta">
-<meta name="description" content="babyAlex – Der intelligente Baby Schlaf- &amp; Stilltracker aus Österreich. Besserer Schlaf für die ganze Familie.">
-<title>babyAlex – Baby Schlaf- &amp; Stilltracker</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
-<link rel="shortcut icon" href="favicon.ico">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#FDF8F2;--bg2:#F5EDE3;--card:#FFF;--nav:rgba(253,248,242,.92);--pri:#E8A87C;--pri-d:#D4845A;--acc:#85CDCA;--acc2:#D4A5E5;--acc3:#F7B7A3;--txt:#3D2C2E;--txt-l:#8A7175;--txt-m:#B8A5A9;--ok:#85CDCA;--warn:#F2C57C;--slp:#7EB5D6;--wak:#F7D794;--err:#E57373;--brd:rgba(61,44,46,.06);--sh:0 2px 20px rgba(61,44,46,.06);--sh-l:0 8px 40px rgba(61,44,46,.1);--r:20px;--rs:12px;--st:env(safe-area-inset-top,20px);--sb:env(safe-area-inset-bottom,20px)}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100dvh;overflow-x:hidden;padding-bottom:calc(80px + var(--sb))}
-/* HEADER */
-.hdr{position:sticky;top:0;z-index:100;padding:calc(var(--st) + 8px) 20px 12px;background:var(--nav);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--brd)}
-.hdr-in{display:flex;justify-content:space-between;align-items:center;max-width:500px;margin:0 auto}
-.logo{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1.4rem;color:var(--pri-d)}.logo span{color:var(--acc)}
-.hdr-baby{display:flex;align-items:center;gap:8px;background:var(--card);padding:6px 14px 6px 8px;border-radius:30px;box-shadow:var(--sh);cursor:pointer}
-.baby-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc3),var(--pri));display:flex;align-items:center;justify-content:center;font-size:16px}
-.baby-nm{font-weight:700;font-size:.85rem}.baby-ag{font-size:.7rem;color:var(--txt-l)}
-/* SCREENS */
-.scr{display:none;padding:16px 20px;max-width:500px;margin:0 auto;animation:fi .3s ease}.scr.act{display:block}
-@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-/* PREDICTION CARD */
-.pred{border-radius:var(--r);padding:24px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:var(--sh-l);background:linear-gradient(135deg,#F7D794 0%,#F2C57C 40%,#E8A87C 100%)}
-.pred::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.15)}
-.pred::after{content:'';position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.1)}
-.pred.slp{background:linear-gradient(135deg,#A8D8EA 0%,#7EB5D6 40%,#85CDCA 100%)}
-.pred-z{position:relative;z-index:1}
-.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;background:rgba(255,255,255,.35);color:var(--txt);margin-bottom:12px}
-.pulse{width:8px;height:8px;border-radius:50%;background:#4CAF50;animation:pu 2s infinite}
-.pulse.slp-pu{background:#fff}
-@keyframes pu{0%,100%{opacity:1}50%{opacity:.4}}
-.pred-lb{font-size:.8rem;color:rgba(61,44,46,.6);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.pred-tm{font-family:'Quicksand',sans-serif;font-size:2.8rem;font-weight:800;color:var(--txt)}
-.pred-sub{font-size:.85rem;color:rgba(61,44,46,.5);margin-top:2px}
-.pred-cd{font-size:1.1rem;font-weight:700;color:var(--txt);margin-top:12px}
-/* NOTIFICATION BANNER */
-.notif-banner{background:linear-gradient(135deg,var(--acc),#6BB8B5);border-radius:var(--rs);padding:14px 18px;margin-bottom:16px;display:none;align-items:center;gap:12px;color:#fff;box-shadow:var(--sh);cursor:pointer;animation:fi .3s ease}
-.notif-banner.show{display:flex}
-.notif-icon{font-size:1.4rem;flex-shrink:0}
-.notif-txt{flex:1;font-weight:600;font-size:.85rem;line-height:1.4}
-.notif-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:1.2rem;cursor:pointer;padding:4px}
-/* QUICK ACTIONS */
-.qact{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-.abtn{background:var(--card);border:none;border-radius:var(--rs);padding:18px 16px;cursor:pointer;box-shadow:var(--sh);display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;font-family:'Nunito',sans-serif}
-.abtn:active{transform:scale(.96)}
-.abtn .ic{font-size:1.8rem}.abtn .lb{font-weight:700;font-size:.8rem;color:var(--txt)}
-.abtn.sl{background:linear-gradient(135deg,var(--slp),#A8D8EA)}.abtn.sl .lb{color:#fff}
-.abtn.wk{background:linear-gradient(135deg,var(--wak),#F7D794)}
-/* TIMELINE */
-.sec-t{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1rem;color:var(--txt-l);margin-bottom:12px}
-.tl{display:flex;flex-direction:column;gap:8px}
-.tli{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:var(--rs);padding:14px 16px;box-shadow:var(--sh);transition:all .2s;cursor:pointer}
-.tli:active{transform:scale(.98)}
-.tl-ic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
-.tl-ic.sl{background:rgba(126,181,214,.15)}.tl-ic.fd{background:rgba(212,165,229,.15)}.tl-ic.dp{background:rgba(247,183,163,.15)}.tl-ic.nt{background:rgba(133,205,202,.15)}
-.tl-nf{flex:1}.tl-tt{font-weight:700;font-size:.85rem}.tl-tm{font-size:.75rem;color:var(--txt-l)}
-.tl-del{background:none;border:none;font-size:1.1rem;color:var(--txt-m);cursor:pointer;padding:4px}
-/* TRACK FORMS */
-.tcat{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-.tc{background:var(--card);border:2px solid var(--brd);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif}
-.tc:active{transform:scale(.96)}.tc.sel{border-color:var(--pri);background:rgba(232,168,124,.08)}
-.tc .ic{font-size:2rem;margin-bottom:8px}.tc .nm{font-weight:700;font-size:.85rem}.tc .ds{font-size:.7rem;color:var(--txt-l);margin-top:2px}
-.tf{display:none;background:var(--card);border-radius:var(--r);padding:20px;box-shadow:var(--sh)}.tf.act{display:block;animation:fi .3s ease}
-.fg{margin-bottom:16px}.fl{font-weight:700;font-size:.8rem;color:var(--txt-l);margin-bottom:6px;display:block}
-.fi{width:100%;padding:12px 16px;border:2px solid var(--brd);border-radius:var(--rs);font-family:'Nunito',sans-serif;font-size:1rem;font-weight:600;background:var(--bg);color:var(--txt);outline:none;transition:border-color .2s}
-.fi:focus{border-color:var(--pri)}
-.fr{display:flex;gap:12px}.fr>*{flex:1}
-.sbtn{width:100%;padding:16px;border:none;border-radius:var(--rs);background:linear-gradient(135deg,var(--pri),var(--pri-d));color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;transition:all .2s}.sbtn:active{transform:scale(.97)}
-.pills{display:flex;gap:8px;flex-wrap:wrap}
-.pill{padding:8px 16px;border:2px solid var(--brd);border-radius:30px;font-family:'Nunito',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;background:var(--bg);color:var(--txt);transition:all .2s}
-.pill.sel{border-color:var(--pri);background:rgba(232,168,124,.1);color:var(--pri-d)}
-/* SOUNDS */
-.np{background:linear-gradient(135deg,#2D2438,#1A1525);border-radius:var(--r);padding:24px;margin-bottom:20px;text-align:center;color:#fff;position:relative;overflow:hidden;display:none}
-.np.act{display:block}
-.np-vis{width:120px;height:120px;margin:0 auto 16px;position:relative}
-.np-rg{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(255,255,255,.1)}
-.np-rg.an{border-color:rgba(133,205,202,.4);animation:rp 3s ease-in-out infinite}
-@keyframes rp{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.1);opacity:.8}}
-.np-rg:nth-child(2){inset:10px;animation-delay:.5s}.np-rg:nth-child(3){inset:20px;animation-delay:1s}
-.np-ic{position:absolute;inset:30px;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
-.np-tt{font-weight:700;font-size:1.1rem;margin-bottom:4px}
-.np-sb{font-size:.8rem;color:rgba(255,255,255,.5)}
-.np-ct{display:flex;justify-content:center;gap:20px;margin-top:16px}
-.np-bt{background:rgba(255,255,255,.1);border:none;width:48px;height:48px;border-radius:50%;color:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.np-bt.pl{background:var(--acc);width:56px;height:56px;font-size:1.4rem}
-.np-timer{font-size:.75rem;color:rgba(255,255,255,.4);margin-top:12px}
-.sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.sc{background:var(--card);border-radius:var(--rs);padding:16px;text-align:center;cursor:pointer;box-shadow:var(--sh);transition:all .2s;border:2px solid transparent}
-.sc:active{transform:scale(.96)}.sc.act{border-color:var(--acc);background:rgba(133,205,202,.08)}
-.sc-em{font-size:2rem;margin-bottom:8px}.sc-nm{font-weight:700;font-size:.7rem;line-height:1.3}
-/* TRENDS */
-.stg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-.stc{background:var(--card);border-radius:var(--rs);padding:16px;box-shadow:var(--sh)}
-.st-v{font-family:'Quicksand',sans-serif;font-weight:800;font-size:1.6rem}
-.st-l{font-size:.7rem;color:var(--txt-l);font-weight:600;margin-top:2px}
-.st-ch{font-size:.7rem;font-weight:700;margin-top:4px}.st-ch.up{color:var(--ok)}.st-ch.dn{color:var(--err)}
-.chc{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:var(--sh);margin-bottom:16px}
-.ch-t{font-weight:700;font-size:.9rem;margin-bottom:16px}
-.ch-a{height:160px;position:relative}
-.bc{display:flex;align-items:flex-end;gap:6px;height:100%;padding-bottom:20px}
-.bg{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.bar{border-radius:6px 6px 0 0;width:100%;min-width:20px;transition:height .6s ease}
-.bar.sl{background:linear-gradient(to top,var(--slp),#A8D8EA)}.bar.wk{background:linear-gradient(to top,var(--wak),#F7D794)}
-.bl{font-size:.6rem;color:var(--txt-m);font-weight:600}
-.lg{display:flex;gap:16px;margin-top:12px}
-.lgi{display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;color:var(--txt-l)}
-.lgd{width:10px;height:10px;border-radius:3px}
-/* COURSE */
-.crs-card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:var(--sh);margin-bottom:12px;cursor:pointer;transition:all .2s;border-left:4px solid var(--pri)}
-.crs-card:active{transform:scale(.98)}
-.crs-card.done{border-left-color:var(--ok);opacity:.7}
-.crs-num{font-size:.7rem;color:var(--txt-m);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.crs-tt{font-weight:800;font-size:1rem;margin-bottom:4px}
-.crs-sub{font-size:.8rem;color:var(--txt-l);line-height:1.4}
-.crs-dur{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;color:var(--txt-m);font-weight:600;margin-top:8px;background:var(--bg);padding:4px 10px;border-radius:20px}
-.crs-content{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--brd);font-size:.9rem;line-height:1.7;color:var(--txt)}
-.crs-content.open{display:block;animation:fi .3s ease}
-.crs-pg{background:var(--bg);border-radius:var(--r);padding:16px 20px;margin-bottom:20px}
-.crs-pg-label{font-size:.75rem;color:var(--txt-l);font-weight:700;margin-bottom:6px}
-.crs-pg-bar{height:8px;background:var(--brd);border-radius:4px;overflow:hidden}
-.crs-pg-fill{height:100%;background:linear-gradient(90deg,var(--pri),var(--acc));border-radius:4px;transition:width .6s ease}
-/* SETTINGS */
-.set-i{background:var(--card);border-radius:var(--rs);padding:16px;box-shadow:var(--sh);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-.set-lb{font-weight:700;font-size:.85rem}.set-vl{font-size:.85rem;color:var(--txt-l)}
-/* TOGGLE SWITCH */
-.toggle{position:relative;width:50px;height:28px;background:var(--brd);border-radius:14px;cursor:pointer;transition:background .3s;border:none}
-.toggle.on{background:var(--acc)}
-.toggle::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:transform .3s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
-.toggle.on::after{transform:translateX(22px)}
-/* ONBOARDING */
-.ob{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
-.ob.hid{display:none}
-.ob-em{font-size:4rem;margin-bottom:20px;animation:float 3s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.ob-tt{font-family:'Quicksand',sans-serif;font-weight:800;font-size:1.8rem;color:var(--pri-d);margin-bottom:8px}
-.ob-sub{color:var(--txt-l);font-size:.95rem;margin-bottom:32px;line-height:1.5}
-.ob-f{width:100%;max-width:340px}.ob-f .fg{text-align:left}
-.ob-nx{width:100%;padding:16px;border:none;border-radius:var(--rs);background:linear-gradient(135deg,var(--pri),var(--pri-d));color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1.1rem;cursor:pointer;margin-top:8px}
-/* INSTALL BANNER */
-.install-banner{position:fixed;bottom:calc(80px + var(--sb) + 12px);left:20px;right:20px;max-width:460px;margin:0 auto;background:linear-gradient(135deg,var(--pri-d),var(--pri));color:#fff;border-radius:var(--r);padding:16px 20px;display:none;align-items:center;gap:12px;box-shadow:var(--sh-l);z-index:90;animation:su .4s ease}
-.install-banner.show{display:flex}
-@keyframes su{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
-.install-tt{flex:1;font-weight:700;font-size:.85rem;line-height:1.3}
-.install-btn{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);border-radius:var(--rs);padding:8px 16px;color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;cursor:pointer;white-space:nowrap}
-.install-x{background:none;border:none;color:rgba(255,255,255,.6);font-size:1.2rem;cursor:pointer;padding:4px}
-/* BOTTOM NAV */
-.bnav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--nav);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--brd);padding:6px 0 calc(6px + var(--sb))}
-.bnav-in{display:flex;justify-content:space-around;max-width:500px;margin:0 auto}
-.ni{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;padding:4px 8px;font-family:'Nunito',sans-serif;color:var(--txt-m);transition:color .2s}
-.ni.act{color:var(--pri-d)}.ni .nii{font-size:1.3rem}.ni .nil{font-size:.6rem;font-weight:700}
-/* EMPTY */
-.emp{text-align:center;padding:40px 20px}.emp-em{font-size:3rem;margin-bottom:12px}
-.emp-tt{font-weight:700;margin-bottom:4px}.emp-sub{font-size:.85rem;color:var(--txt-l);line-height:1.5}
-/* MODAL */
-.mdl-o{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
-.mdl-o.act{display:flex}
-.mdl{background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:24px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto;animation:su .3s ease}
-.mdl-h{width:40px;height:4px;background:var(--txt-m);border-radius:2px;margin:0 auto 16px}
-.mdl-t{font-family:'Quicksand',sans-serif;font-weight:800;font-size:1.2rem;margin-bottom:16px}
-/* TOAST */
-.toast{position:fixed;top:calc(var(--st) + 70px);left:50%;transform:translateX(-50%);background:#3D3248;color:#fff;padding:12px 24px;border-radius:30px;font-weight:700;font-size:.85rem;z-index:300;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.3)}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-/* Night Mode */
-body.night-mode{--bg:#1A1520;--card:#2D2438;--txt:#F0E8EA;--txt-l:#D4C4C8;--txt-m:#A090A0;--brd:#3D3248;--pri:#D4A5E5;--pri-d:#B07CC7;--acc:#6BB8B5;--sh:0 2px 8px rgba(0,0,0,.3);--sh-l:0 4px 16px rgba(0,0,0,.4);--err:#E57373;--ok:#66BB6A;--bg2:#3D3248;--nav:rgba(26,21,32,.95)}
-body.night-mode .pred{background:linear-gradient(135deg,#2D2438,#3D2448)!important}
-body.night-mode .pred.slp{background:linear-gradient(135deg,#1A2538,#2D3448)!important}
-body.night-mode .pred *{color:var(--txt)!important}
-body.night-mode .pred .pred-sub,body.night-mode .pred .pred-cd{color:var(--txt-l)!important}
-body.night-mode .pred .badge{color:#fff!important}
-body.night-mode .hdr{background:rgba(26,21,32,.92)!important;backdrop-filter:blur(12px)}
-body.night-mode .hdr *{color:var(--txt)}
-body.night-mode .logo span{color:var(--pri)!important}
-body.night-mode .tc{background:var(--card);border-color:var(--brd);color:var(--txt)}
-body.night-mode .tc .nm,body.night-mode .tc .ds{color:var(--txt)}
-body.night-mode .bnav{background:rgba(26,21,32,.95)!important}
-body.night-mode .abtn{background:var(--card);color:var(--txt)}
-body.night-mode .abtn .lb{color:var(--txt)!important}
-body.night-mode .fi{background:var(--bg);border-color:var(--brd);color:var(--txt)}
-body.night-mode .set-i{border-color:var(--brd);color:var(--txt)}
-body.night-mode .set-lb{color:var(--txt)!important}
-body.night-mode .set-vl{color:var(--txt-l)!important}
-body.night-mode .install-banner{background:linear-gradient(135deg,#2D2438,#3D2448)!important}
-body.night-mode .sbtn{background:linear-gradient(135deg,#7E57C2,#5E35B1)!important;color:#fff!important}
-body.night-mode .tf{background:var(--card);border-radius:var(--r);padding:16px;margin-top:8px}
-body.night-mode .mdl-t{color:var(--txt)}
-body.night-mode .fl{color:var(--txt-l)}
-body.night-mode .pill{background:var(--bg);border-color:var(--brd);color:var(--txt)}
-body.night-mode .pill.sel{background:var(--pri-d);border-color:var(--pri);color:#fff}
-body.night-mode .tli{background:var(--card);border-color:var(--brd);color:var(--txt)}
-body.night-mode .tl-tt{color:var(--txt)!important}
-body.night-mode .tl-tm{color:var(--txt-l)!important}
-body.night-mode .tl-del{color:var(--err)!important}
-body.night-mode .sec-t{color:var(--txt-l)}
-body.night-mode .emp,.night-mode .emp *{color:var(--txt-m)!important}
-body.night-mode .badge{background:rgba(255,255,255,.15)}
-body.night-mode .ww-prog{background:var(--brd)}
-body.night-mode .ww-labels span{color:var(--txt-l)!important}
-body.night-mode .day-tl{background:var(--card)!important}
-body.night-mode .day-tl *{color:var(--txt-l)}
-body.night-mode .child-chip{background:var(--card);border-color:var(--brd);color:var(--txt)}
-body.night-mode .child-chip.act{background:var(--pri-d);color:#fff}
-body.night-mode .mdl{background:var(--card)!important;color:var(--txt)}
-body.night-mode .ni{color:var(--txt-m)}
-body.night-mode .ni.act{color:var(--pri)}
-body.night-mode .nil{color:inherit!important}
-body.night-mode .bed-card{background:linear-gradient(135deg,#2D2438,#1A1525)!important}
-body.night-mode .bed-card *{color:#F2C57C!important}
-body.night-mode .qact .abtn.sl{background:linear-gradient(135deg,#5C6BC0,#3949AB)!important}
-body.night-mode .qact .abtn.wk{background:linear-gradient(135deg,#FF8F00,#F57C00)!important}
-body.night-mode, body.night-mode *:not(.pill.sel):not(.sbtn):not(.ni):not(.nii){color:var(--txt)!important}
-body.night-mode .sec-t{color:var(--pri)!important}
-body.night-mode .set-vl,body.night-mode .pred-sub,body.night-mode .pred-cd,body.night-mode .st-l,body.night-mode .ch-t{color:var(--txt-l)!important}
-body.night-mode .toggle{border-color:var(--brd)!important}
-body.night-mode input,body.night-mode select{color:var(--txt)!important;background:var(--bg2)!important}
-
-/* Nursing stopwatch buttons */
-.sw-side-btn{position:relative;width:100px;height:100px;border-radius:50%;border:3px solid var(--brd);font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:var(--bg);transition:all .3s ease;overflow:hidden}
-.sw-side-btn.act{border-color:var(--pr);background:linear-gradient(135deg,#fff5ee,#ffe8d6);box-shadow:0 0 20px rgba(210,140,90,.35);transform:scale(1.08)}
-.sw-side-btn:not(.act){opacity:.5}
-.sw-side-btn.act .sw-pulse{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;border:2px solid var(--pr);animation:swPulse 2s ease infinite}
-.sw-side-btn:not(.act) .sw-pulse{display:none}
-.sw-side-icon{font-size:1.3rem;transform:scaleX(1)}
-.sw-side-btn#sw-R .sw-side-icon{transform:scaleX(-1)}
-.sw-side-label{font-size:.7rem;color:var(--pr);font-weight:800}
-.sw-side-time{font-family:Quicksand;font-weight:800;font-size:.85rem;color:var(--txt)}
-.sw-side-btn:not(.act) .sw-side-label{color:var(--txt-m)}
-@keyframes swPulse{0%{transform:scale(.85);opacity:.6}50%{transform:scale(1);opacity:0}100%{transform:scale(.85);opacity:0}}
-/* When no side selected yet, both visible */
-.sw-side-btn:not(.act):not(.inactive){opacity:1}
-.sw-side-btn.inactive{opacity:.45}
-
-/* Feedback */
-.fb-type{padding:8px 14px;border:2px solid var(--brd);border-radius:20px;background:var(--bg);font-family:Nunito;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .2s}
-.fb-type.act{border-color:var(--pr);background:linear-gradient(135deg,#fff5ee,#ffe8d6);color:var(--pr)}
-.fb-ss-btn{padding:8px 14px;border:2px solid var(--brd);border-radius:var(--rs);background:var(--bg);font-family:Nunito;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .2s}
-.fb-ss-btn:active{transform:scale(.96)}
-#fb-send-btn:disabled{opacity:.5;cursor:not-allowed}
-
-/* Sleep time picker */
-.stp-wrap{background:var(--bg2);border-radius:var(--rs);padding:10px 14px;margin-top:8px;animation:slideDown .2s ease}
-.stp-inner{display:flex;flex-direction:column;gap:4px}
-.stp-btn{padding:6px 14px;border:2px solid var(--brd);border-radius:16px;background:var(--bg);font-family:Nunito;font-weight:700;font-size:.8rem;cursor:pointer}
-.stp-btn.act{border-color:var(--pr);background:linear-gradient(135deg,#fff5ee,#ffe8d6);color:var(--pr)}
-.stp-input{padding:6px 10px;border:2px solid var(--brd);border-radius:var(--rs);font-family:Quicksand;font-weight:700;font-size:.9rem;width:100px}
-.stp-go{width:36px;height:36px;border:none;border-radius:50%;background:var(--ok);color:#fff;font-size:1.1rem;font-weight:800;cursor:pointer}
-.stp-x{width:36px;height:36px;border:none;border-radius:50%;background:var(--bg);color:var(--txt-m);font-size:1rem;cursor:pointer;border:2px solid var(--brd)}
-@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-
-.mk-confirm{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center}
-.mk-confirm.show{display:flex}
-.mk-card{background:var(--card);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;box-shadow:var(--sh)}
-.mk-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.mk-code{font-family:Quicksand;font-weight:800;font-size:1rem;letter-spacing:1px}
-.mk-badge{font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:10px;display:inline-block}
-.mk-badge.green{background:#E8F5E9;color:#2E7D32}
-.mk-badge.yellow{background:#FFF8E1;color:#F57F17}
-.mk-badge.red{background:#FFEBEE;color:#C62828}
-.mk-badge.expired{background:#E0E0E0;color:#757575;text-decoration:line-through}
-.mk-badge.used{background:#E3F2FD;color:#1565C0}
-.mk-bar{height:5px;border-radius:3px;background:var(--bg2);margin:8px 0 6px;overflow:hidden}
-.mk-bar-fill{height:100%;border-radius:3px;transition:width .3s}
-.mk-info{font-size:.78rem;color:var(--txt-m);display:flex;gap:12px;flex-wrap:wrap}
-.mk-acts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.mk-acts button{padding:5px 10px;border:1.5px solid var(--brd);border-radius:var(--rs);background:var(--bg);font-family:Nunito;font-size:.72rem;font-weight:700;cursor:pointer}
-
-/* Tutorial Walkthrough */
-#tut-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9990}
-#tut-overlay.show{display:block}
-#tut-spotlight{position:absolute;border-radius:16px;box-shadow:0 0 0 9999px rgba(0,0,0,.7),0 0 30px 8px rgba(242,197,124,.4);transition:all .4s ease;pointer-events:none}
-#tut-spotlight::after{content:'';position:absolute;inset:-6px;border-radius:20px;border:3px solid rgba(242,197,124,.6);animation:tutPulse 2s infinite}
-@keyframes tutPulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.02)}}
-#tut-card{position:absolute;background:var(--bg,#FFF8F0);border-radius:16px;padding:20px;max-width:300px;width:calc(100vw - 40px);box-shadow:0 8px 32px rgba(0,0,0,.3);z-index:9991;transition:all .4s ease}
-#tut-card.arrow-top::before{content:'';position:absolute;top:-8px;left:50%;margin-left:-8px;width:16px;height:16px;background:var(--bg,#FFF8F0);transform:rotate(45deg)}
-#tut-card.arrow-bottom::before{content:'';position:absolute;bottom:-8px;left:50%;margin-left:-8px;width:16px;height:16px;background:var(--bg,#FFF8F0);transform:rotate(45deg)}
-#tut-emoji{font-size:2rem;text-align:center;margin-bottom:8px}
-#tut-title{font-weight:800;font-size:1rem;text-align:center;margin-bottom:6px}
-#tut-text{font-size:.82rem;color:var(--txt-m,#666);text-align:center;line-height:1.5;margin-bottom:14px}
-#tut-dots{display:flex;justify-content:center;gap:6px;margin-bottom:14px}
-#tut-dots .dot{width:8px;height:8px;border-radius:50%;background:var(--brd,#ddd);transition:all .3s}
-#tut-dots .dot.act{background:var(--prim,#D4845A);width:20px;border-radius:4px}
-#tut-btns{display:flex;gap:8px;justify-content:center}
-#tut-btns button{padding:8px 18px;border:none;border-radius:10px;font-family:Nunito,sans-serif;font-weight:800;font-size:.82rem;cursor:pointer}
-#tut-skip{background:transparent;color:var(--txt-m,#999)}
-#tut-back{background:var(--bg2,#f0f0f0);color:var(--txt-l,#666)}
-#tut-next{background:var(--prim,#D4845A);color:#fff}
-#tut-step{font-size:.65rem;color:var(--txt-m,#999);text-align:center;margin-bottom:10px}
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-</head>
-<body>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- ONBOARDING -->
-<div class="ob" id="onboarding">
-  <div class="ob-em">🌙</div>
-  <div class="ob-tt">babyAlex</div>
-  <div class="ob-sub"><span data-t="ob_sub">Besserer Schlaf für die ganze Familie.</span><br>Made in Austria 🇦🇹</div>
-  <div class="ob-f">
-    <div style="text-align:center;margin-bottom:12px"><div data-t="ob_lang" style="font-size:.8rem;color:var(--txt-m);margin-bottom:6px">Sprache wählen</div><div id="lang-grid" style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;max-height:120px;overflow-y:auto;padding:4px"><button class="lb" onclick="setLang('de')" style="background:var(--pri);color:#fff;border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="de">🇦🇹 Deutsch</button>
-<button class="lb" onclick="setLang('en')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="en">🇬🇧 English</button>
-<button class="lb" onclick="setLang('tr')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="tr">🇹🇷 Türkçe</button>
-<button class="lb" onclick="setLang('bs')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="bs">🇧🇦 Bosanski</button>
-<button class="lb" onclick="setLang('fr')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="fr">🇫🇷 Français</button>
-<button class="lb" onclick="setLang('es')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="es">🇪🇸 Español</button>
-<button class="lb" onclick="setLang('it')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="it">🇮🇹 Italiano</button>
-<button class="lb" onclick="setLang('pl')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="pl">🇵🇱 Polski</button>
-<button class="lb" onclick="setLang('ro')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="ro">🇷🇴 Română</button>
-<button class="lb" onclick="setLang('uk')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="uk">🇺🇦 Українська</button>
-<button class="lb" onclick="setLang('ar')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="ar">🇸🇦 العربية</button>
-<button class="lb" onclick="setLang('hu')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="hu">🇭🇺 Magyar</button>
-<button class="lb" onclick="setLang('pt')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="pt">🇧🇷 Português</button>
-<button class="lb" onclick="setLang('ru')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="ru">🇷🇺 Русский</button>
-<button class="lb" onclick="setLang('zh')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="zh">🇨🇳 中文</button>
-<button class="lb" onclick="setLang('ja')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="ja">🇯🇵 日本語</button>
-<button class="lb" onclick="setLang('ko')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="ko">🇰🇷 한국어</button>
-<button class="lb" onclick="setLang('hi')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="hi">🇮🇳 हिन्दी</button>
-<button class="lb" onclick="setLang('bn')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="bn">🇧🇩 বাংলা</button>
-<button class="lb" onclick="setLang('th')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="th">🇹🇭 ไทย</button>
-<button class="lb" onclick="setLang('vi')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="vi">🇻🇳 Tiếng Việt</button>
-<button class="lb" onclick="setLang('id')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="id">🇮🇩 Indonesia</button>
-<button class="lb" onclick="setLang('ms')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="ms">🇲🇾 Melayu</button>
-<button class="lb" onclick="setLang('tl')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="tl">🇵🇭 Filipino</button>
-<button class="lb" onclick="setLang('sw')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="sw">🇰🇪 Kiswahili</button>
-<button class="lb" onclick="setLang('nl')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="nl">🇳🇱 Nederlands</button>
-<button class="lb" onclick="setLang('sv')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="sv">🇸🇪 Svenska</button>
-<button class="lb" onclick="setLang('da')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="da">🇩🇰 Dansk</button>
-<button class="lb" onclick="setLang('no')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="no">🇳🇴 Norsk</button>
-<button class="lb" onclick="setLang('fi')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="fi">🇫🇮 Suomi</button>
-<button class="lb" onclick="setLang('el')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="el">🇬🇷 Ελληνικά</button>
-<button class="lb" onclick="setLang('cs')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="cs">🇨🇿 Čeština</button>
-<button class="lb" onclick="setLang('sk')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="sk">🇸🇰 Slovenčina</button>
-<button class="lb" onclick="setLang('bg')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="bg">🇧🇬 Български</button>
-<button class="lb" onclick="setLang('hr')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="hr">🇭🇷 Hrvatski</button>
-<button class="lb" onclick="setLang('sr')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="sr">🇷🇸 Srpski</button>
-<button class="lb" onclick="setLang('sl')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="sl">🇸🇮 Slovenščina</button>
-<button class="lb" onclick="setLang('he')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="he">🇮🇱 עברית</button>
-<button class="lb" onclick="setLang('fa')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="fa">🇮🇷 فارسی</button>
-<button class="lb" onclick="setLang('ur')" style="background:var(--card);color:var(--txt);border:1px solid var(--brd);border-radius:20px;padding:3px 10px;font-size:.7rem;cursor:pointer;white-space:nowrap" data-lc="ur">🇵🇰 اردو</button></div></div>
-    <div class="fg"><label class="fl" data-t="ob_name">Name deines Babys</label><input class="fi" id="ob-name" placeholder="z.B. Emma" autocomplete="off"></div>
-    <div class="fg"><label class="fl" data-t="ob_bday">Geburtsdatum</label><input class="fi" id="ob-bday" type="date"></div>
-    <button class="ob-nx" onclick="finishOb()" data-t="ob_go">Los geht's! 🚀</button>
-    <div style="display:flex;align-items:center;gap:12px;margin:16px 0"><div style="flex:1;height:1px;background:var(--brd)"></div><span style="font-size:.8rem;color:var(--txt-m);white-space:nowrap"><span data-t="ob_partner">Partner hat schon einen Code?</span></span><div style="flex:1;height:1px;background:var(--brd)"></div></div>
-    <div style="display:flex;gap:8px">
-      <input type="text" id="ob-sync" class="fi" placeholder="FAMILIEN-CODE" maxlength="6" style="text-transform:uppercase;letter-spacing:3px;text-align:center;font-size:1.1rem;flex:1">
-      <button onclick="finishObWithSync()" style="padding:12px 20px;border:none;border-radius:var(--rs);background:var(--acc);color:#fff;font-weight:800;font-size:.85rem;cursor:pointer;white-space:nowrap" data-t="ob_join">Beitreten</button>
-    </div>
-  </div>
-</div>
-
-<!-- INSTALL BANNER -->
-<div class="install-banner" id="install-banner">
-  <span style="font-size:1.5rem">📱</span>
-  <div class="install-tt"><span data-t="inst_txt">babyAlex als App installieren – auch offline nutzbar!</span></div>
-  <button class="install-btn" onclick="installApp()" data-t="inst_btn">Installieren</button>
-  <button class="install-x" onclick="dismissInstall()">✕</button>
-</div>
-
-<!-- HEADER -->
-<div class="hdr">
-  <div class="hdr-in">
-    <div class="logo">baby<span style="color:var(--acc)">Alex</span></div>
-    <div style="display:flex;align-items:center;gap:8px">
-    <button class="night-btn" id="night-btn" onclick="toggleNight()" style="background:none;border:none;font-size:1.3rem;cursor:pointer">🌙</button>
-    <div class="hdr-baby" onclick="nav('settings')">
-      <div class="baby-av">👶</div>
-      <div><div class="baby-nm" id="h-nm">Baby</div><div class="baby-ag" id="h-ag" data-t="s_age_val">0 Monate</div></div>
-    </div>
-    </div>
-  </div>
-  <div class="child-sw" id="child-sw"></div>
-</div>
-
-<!-- ===== HOME ===== -->
-<div class="scr act" id="scr-home">
-  <!-- Regression Banner -->
-  <div class="regr-banner" id="regr-banner" style="display:none"><span style="font-size:1.4rem">🔄</span><div id="regr-txt"></div></div>
-  <!-- Notification Banner -->
-  <div class="notif-banner" id="notif-b" onclick="enableNotif()">
-    <div class="notif-icon">🔔</div>
-    <div class="notif-txt"><span data-t="notif_ask">Benachrichtigungen aktivieren? Wir erinnern dich 30 Min vor dem Nickerchen!</span></div>
-    <button class="notif-close" onclick="event.stopPropagation();dismissNotifBanner()">✕</button>
-  </div>
-
-  <div class="pred" id="pred">
-    <div class="pred-z">
-      <div class="badge" id="badge"><div class="pulse" id="pu-dot"></div><span id="st-txt" data-t="tr_wake_lbl">Wach</span></div>
-      <div class="pred-lb" id="p-lb" data-t="p_next">Nächstes Nickerchen</div>
-      <div class="pred-tm" id="p-tm">--:--</div>
-      <div class="pred-sub" id="p-sub" data-t="p_start">Starte das Tracking für Vorhersagen</div>
-      <div class="pred-cd" id="p-cd"></div>
-      <div class="ww-prog" id="ww-prog" style="display:none"><div class="ww-fill" id="ww-fill"></div></div>
-      <div class="ww-labels" id="ww-labels" style="display:none"><span id="ww-elapsed"></span><span id="ww-target"></span></div>
-    </div>
-  </div>
-
-  <div class="bed-card" id="bed-card" style="display:none;background:linear-gradient(135deg,#2D2438,#1A1525);border-radius:var(--r);padding:18px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px;color:#fff"><div style="font-size:2rem">🛏️</div><div style="flex:1"><div style="font-weight:800;font-size:.9rem" data-t="p_bedtime">Optimale Schlafenszeit</div><div id="bed-tm" style="font-family:Quicksand;font-weight:800;font-size:1.4rem;color:#F2C57C">--:--</div><div id="bed-sub" style="font-size:.72rem;color:rgba(255,255,255,.4);margin-top:2px"></div></div></div>
-
-  <div class="day-tl" style="background:var(--card);border-radius:var(--rs);padding:14px 16px;margin-bottom:14px;box-shadow:var(--sh)"><div style="font-weight:700;font-size:.8rem;margin-bottom:8px;color:var(--txt-l)" data-t="day_tl">📊 Tagesverlauf</div><div id="day-bar" style="height:24px;background:var(--bg2);border-radius:6px;position:relative;overflow:hidden;display:flex"></div><div style="display:flex;justify-content:space-between;margin-top:4px;font-size:.55rem;color:var(--txt-m)"><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span></div></div>
-
-  <div class="qact">
-    <button class="abtn sl" id="btn-sleep" onclick="qSleepAsk()"><span class="ic">😴</span><span class="lb" data-t="h_asleep">Eingeschlafen</span></button>
-    <button class="abtn wk" id="btn-wake" onclick="qWake()"><span class="ic">☀️</span><span class="lb" data-t="h_awake">Aufgewacht</span></button>
-  </div>
-  <div id="sleep-time-picker" class="stp-wrap" style="display:none">
-    <div class="stp-inner">
-      <span data-t="f_sleep_when" style="font-weight:700;font-size:.85rem">⏰ Wann eingeschlafen?</span>
-      <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
-        <button class="stp-btn act" onclick="stpNow()">Jetzt</button>
-        <input type="time" id="stp-time" class="stp-input" onchange="stpCustom()">
-        <button class="stp-go" onclick="qSleepConfirm()">✓</button>
-        <button class="stp-x" onclick="stpCancel()">✕</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tracking Kacheln -->
-  <div class="sec-t" style="margin-top:8px">📊 <span data-t="h_track">Eintrag erfassen</span></div>
-  <div class="tcat">
-    <div class="tc" onclick="openForm('feed')"><div class="ic">🍼</div><div class="nm" data-t="h_feed">Fütterung</div></div>
-    <div class="tc" onclick="openForm('diaper')"><div class="ic">🧷</div><div class="nm" data-t="h_diaper">Windel</div></div>
-    <div class="tc" onclick="openForm('night')"><div class="ic">🌙</div><div class="nm" data-t="h_night">Unruhig</div></div>
-    <div class="tc" onclick="if(swState.startTime){nurseRestore()}else{openForm('nurse')}"><div class="ic">🤱</div><div class="nm" data-t="h_nurse">Stillen</div></div>
-    <div class="tc" onclick="openForm('pump')"><div class="ic">🧴</div><div class="nm" data-t="h_pump">Abpumpen</div></div>
-    <div class="tc" onclick="openForm('sleep')"><div class="ic">😴</div><div class="nm" data-t="h_sleep">Schlaf</div></div>
-    <div class="tc" onclick="openForm('note')"><div class="ic">📝</div><div class="nm" data-t="h_note">Notiz</div></div>
-  </div>
-</div>
-
-<!-- ===== HEUTE ===== -->
-<div class="scr" id="scr-today">
-  <!-- Date Nav -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-    <button onclick="calPrev()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt)">◀</button>
-    <div id="cal-month" style="font-weight:800;font-size:.95rem;cursor:pointer" onclick="calToday()"></div>
-    <button onclick="calNext()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt)">▶</button>
-  </div>
-  <!-- Calendar Grid -->
-  <div id="cal-days" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:12px;text-align:center"></div>
-  <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:16px;text-align:center"></div>
-  <!-- Selected Day Info -->
-  <div id="cal-day-header" style="font-weight:700;font-size:.9rem;color:var(--pri-d);margin-bottom:8px"></div>
-  <div id="cal-day-stats" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"></div>
-  <div class="tl" id="tl"></div>
-  <div class="emp" id="tl-emp"><div class="emp-em">📝</div><div class="emp-tt" data-t="cal_none">Keine Einträge</div><div class="emp-sub" data-t="cal_none_sub">An diesem Tag wurde nichts erfasst.</div></div>
-</div>
-
-<!-- FORM MODALS -->
-<div class="mdl-o" id="fm-sleep" onclick="if(event.target===this)closeForm()"><div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="width:40px;height:4px;background:var(--txt-m);border-radius:2px"></div><button onclick="event.stopPropagation();closeForm()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m);padding:4px 8px">✕</button></div>
-  <div class="mdl-t" data-t="f_sleep_t">😴 Schlaf eintragen</div>
-  <div class="fg"><label class="fl" data-t="f_type">Art</label><div class="pills" id="pi-slt"><div class="pill sel" data-v="nap" onclick="sp(this)" data-t="f_nap">Nickerchen</div><div class="pill" data-v="night" onclick="sp(this)" data-t="f_night">Nachtschlaf</div></div></div>
-  <div class="fr"><div class="fg"><label class="fl" data-t="h_asleep">Eingeschlafen</label><input class="fi" type="time" id="sl-s"></div><div class="fg"><label class="fl" data-t="h_awake">Aufgewacht</label><input class="fi" type="time" id="sl-e"></div></div>
-  <button class="sbtn" onclick="saveSl()" data-t="f_save">💾 Speichern</button>
-</div></div>
-
-<div class="mdl-o" id="fm-feed" onclick="if(event.target===this)closeForm()"><div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="width:40px;height:4px;background:var(--txt-m);border-radius:2px"></div><button onclick="event.stopPropagation();closeForm()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m);padding:4px 8px">✕</button></div>
-  <div class="mdl-t" data-t="f_feed_t">🍼 Fütterung eintragen</div>
-  <div class="fg"><label class="fl" data-t="f_type">Art</label><div class="pills" id="pi-fdt"><div class="pill sel" data-v="breast" onclick="sp(this)" data-t="f_breast">Stillen</div><div class="pill" data-v="bottle" onclick="sp(this)" data-t="f_bottle">Flasche</div><div class="pill" data-v="solid" onclick="sp(this)" data-t="f_solid">Beikost</div></div></div>
-  <div class="fr"><div class="fg"><label class="fl" data-t="f_time">Uhrzeit</label><input class="fi" type="time" id="fd-t"></div><div class="fg"><label class="fl" data-t="f_dur">Dauer (Min)</label><input class="fi" type="number" id="fd-ml" placeholder="15" min="1" max="120"></div></div>
-  <button class="sbtn" onclick="saveFd()" data-t="f_save">💾 Speichern</button>
-</div></div>
-
-<div class="mdl-o" id="fm-diaper" onclick="if(event.target===this)closeForm()"><div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="width:40px;height:4px;background:var(--txt-m);border-radius:2px"></div><button onclick="event.stopPropagation();closeForm()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m);padding:4px 8px">✕</button></div>
-  <div class="mdl-t" data-t="f_diaper_t">🧷 Windel eintragen</div>
-  <div class="fg"><label class="fl" data-t="f_type">Art</label><div class="pills" id="pi-dpt"><div class="pill sel" data-v="wet" onclick="sp(this)" data-t="f_wet">Nass</div><div class="pill" data-v="dirty" onclick="sp(this)" data-t="f_dirty">Voll</div><div class="pill" data-v="both" onclick="sp(this)" data-t="f_both">Beides</div></div></div>
-  <div class="fg"><label class="fl" data-t="f_time">Uhrzeit</label><input class="fi" type="time" id="dp-t"></div>
-  <button class="sbtn" onclick="saveDp()" data-t="f_save">💾 Speichern</button>
-</div></div>
-
-<div class="mdl-o" id="fm-note" onclick="if(event.target===this)closeForm()"><div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="width:40px;height:4px;background:var(--txt-m);border-radius:2px"></div><button onclick="event.stopPropagation();closeForm()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m);padding:4px 8px">✕</button></div>
-  <div class="mdl-t" data-t="f_note_t">📝 Notiz</div>
-  <div class="fg"><label class="fl" data-t="f_time">Uhrzeit</label><input class="fi" type="time" id="nt-t"></div>
-  <div class="fg"><label class="fl" data-t="f_note_ph">Notiz</label><input class="fi" type="text" id="nt-tx" placeholder="z.B. Temperatur 37.2°"></div>
-  <button class="sbtn" onclick="saveNt()" data-t="f_save">💾 Speichern</button>
-</div></div>
-
-<div class="mdl-o" id="fm-night" onclick="if(event.target===this)closeForm()"><div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="width:40px;height:4px;background:var(--txt-m);border-radius:2px"></div><button onclick="event.stopPropagation();closeForm()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m);padding:4px 8px">✕</button></div>
-  <div class="mdl-t" data-t="f_night_t">🌙 Nächtliches Aufwachen</div>
-  <div class="fg"><label class="fl" data-t="f_time">Uhrzeit</label><input class="fi" type="time" id="nw-t"></div>
-  <div class="fg"><label class="fl" data-t="f_dur">Dauer (Min)</label><input class="fi" type="number" id="nw-d" placeholder="15"></div>
-  <div class="fg"><label class="fl" data-t="f_reason">Grund</label><div class="pills" id="pi-nwr"><div class="pill sel" data-v="hunger" onclick="sp(this)" data-t="f_hunger">Hunger</div><div class="pill" data-v="diaper" onclick="sp(this)">Windel</div><div class="pill" data-v="comfort" onclick="sp(this)" data-t="f_comfort">Trost</div><div class="pill" data-v="unknown" onclick="sp(this)" data-t="f_unknown">Unbekannt</div></div></div>
-  <button class="sbtn" onclick="saveNw()" data-t="f_save">💾 Speichern</button>
-</div></div>
-
-<div class="mdl-o" id="fm-nurse" onclick="if(event.target===this)nurseCloseAsk()"><div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="width:40px;height:4px;background:var(--txt-m);border-radius:2px"></div><button onclick="event.stopPropagation();nurseCloseAsk()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m);padding:4px 8px">✕</button></div>
-  <div class="mdl-t" data-t="f_nurse_t">🤱 Stillen mit Stoppuhr</div>
-  <div class="nurse-sw" style="text-align:center;margin:16px 0">
-    <div id="sw-time" style="font-family:Quicksand;font-weight:800;font-size:3rem;letter-spacing:2px">00:00</div>
-    <div style="display:flex;justify-content:center;gap:20px;margin:18px 0">
-      <button id="sw-L" onclick="swSide('L')" class="sw-side-btn"><div class="sw-side-icon">🤱</div><div class="sw-side-label" data-t="f_left">Links</div><div id="sw-tL" class="sw-side-time">0:00</div><div class="sw-pulse"></div></button>
-      <button id="sw-R" onclick="swSide('R')" class="sw-side-btn"><div class="sw-side-icon">🤱</div><div class="sw-side-label" data-t="f_right">Rechts</div><div id="sw-tR" class="sw-side-time">0:00</div><div class="sw-pulse"></div></button>
-    </div>
-    <div id="sw-hint" style="font-size:.75rem;color:var(--txt-m);margin:-6px 0 10px" data-t="f_nurse_hint">Seite antippen zum Wechseln</div>
-    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
-      <button id="sw-start" onclick="swStart()" style="padding:12px 28px;border:none;border-radius:var(--rs);font-family:Nunito;font-weight:800;font-size:.9rem;cursor:pointer;background:var(--ok);color:#fff" data-t="f_start">▶ Start</button>
-      <button id="sw-pause" onclick="swPause()" style="padding:12px 28px;border:none;border-radius:var(--rs);font-family:Nunito;font-weight:800;font-size:.9rem;cursor:pointer;background:var(--wrn);color:#fff;display:none">⏸ Pause</button>
-      <button id="sw-stop" onclick="nurseStopAsk()" style="padding:12px 28px;border:none;border-radius:var(--rs);font-family:Nunito;font-weight:800;font-size:.9rem;cursor:pointer;background:var(--err);color:#fff;display:none">⏹ Stop</button>
-      <button onclick="swReset()" style="padding:12px 28px;border:none;border-radius:var(--rs);font-family:Nunito;font-weight:800;font-size:.9rem;cursor:pointer;background:var(--bg2);color:var(--txt-l)" data-t="f_reset">↺ Reset</button>
-    </div>
-  </div>
-</div></div>
-
-
-
-<!-- ===== PUMP TIMER ===== -->
-<div class="mdl-o" id="fm-pump" onclick="if(event.target===this)pumpCloseAsk()"><div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="width:40px;height:4px;background:var(--txt-m);border-radius:2px"></div><button onclick="event.stopPropagation();pumpCloseAsk()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m);padding:4px 8px">✕</button></div>
-  <div class="mdl-t" data-t="f_pump_t">🧴 Abpumpen Timer</div>
-  <div style="text-align:center;margin:16px 0">
-    <div id="pump-time" style="font-family:Quicksand;font-weight:800;font-size:3rem;letter-spacing:2px">00:00</div>
-    <div style="display:flex;justify-content:center;gap:16px;margin:18px 0">
-      <button id="pump-L" onclick="pumpSide('L')" class="sw-side-btn"><div class="sw-side-icon">🫙</div><div class="sw-side-label" data-t="f_left">Links</div><div id="pump-tL" class="sw-side-time">0:00</div><div class="sw-pulse"></div></button>
-      <button id="pump-R" onclick="pumpSide('R')" class="sw-side-btn"><div class="sw-side-icon">🫙</div><div class="sw-side-label" data-t="f_right">Rechts</div><div id="pump-tR" class="sw-side-time">0:00</div><div class="sw-pulse"></div></button>
-      <button id="pump-B" onclick="pumpSide('B')" class="sw-side-btn"><div class="sw-side-icon">🫙🫙</div><div class="sw-side-label" data-t="f_pump_both">Beide</div><div id="pump-tB" class="sw-side-time">0:00</div><div class="sw-pulse"></div></button>
-    </div>
-    <div class="fr" style="margin:12px 0"><label class="fl" data-t="f_pump_ml">Menge (ml)</label><input type="number" id="pump-ml" placeholder="z.B. 120" min="0" max="999" style="width:100%;padding:10px 14px;border-radius:var(--rs);border:1.5px solid var(--brd);font-family:Nunito;font-size:.9rem;text-align:center"></div>
-    <div class="fr" style="margin:12px 0"><label class="fl" data-t="mk_storage">Lagerort</label>
-      <div class="pills" id="pi-pump-store"><div class="pill sel" data-v="fridge" onclick="sp(this)">❄️ Kühlschrank</div><div class="pill" data-v="freezer" onclick="sp(this)">🧊 Tiefkühler</div><div class="pill" data-v="room" onclick="sp(this)">🌡️ Raum</div><div class="pill" data-v="none" onclick="sp(this)">❌ Nicht lagern</div></div>
-    </div>
-    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
-      <button id="pump-start" onclick="pumpStart()" style="padding:12px 28px;border:none;border-radius:var(--rs);font-family:Nunito;font-weight:800;font-size:.9rem;cursor:pointer;background:var(--ok);color:#fff" data-t="f_start">▶ Start</button>
-      <button id="pump-pause-btn" onclick="pumpPauseFn()" style="padding:12px 28px;border:none;border-radius:var(--rs);font-family:Nunito;font-weight:800;font-size:.9rem;cursor:pointer;background:var(--wrn);color:#fff;display:none">⏸ Pause</button>
-      <button id="pump-stop" onclick="pumpStopAsk()" style="padding:12px 28px;border:none;border-radius:var(--rs);font-family:Nunito;font-weight:800;font-size:.9rem;cursor:pointer;background:var(--err);color:#fff;display:none">⏹ Stop</button>
-      <button onclick="pumpReset()" style="padding:12px 28px;border:none;border-radius:var(--rs);font-family:Nunito;font-weight:800;font-size:.9rem;cursor:pointer;background:var(--bg2);color:var(--txt-l)" data-t="f_reset">↺ Reset</button>
-    </div>
-  </div>
-</div></div>
-
-<!-- PUMP CONFIRM MODALS -->
-<div class="mdl-o mk-confirm" id="pump-confirm" onclick="if(event.target===this)this.classList.remove('show')"><div class="mdl" style="background:var(--bg);border-radius:var(--r);padding:22px;width:90%;max-width:350px;margin:auto;text-align:center">
-  <div style="font-size:2rem;margin-bottom:8px">🧴</div>
-  <div style="font-weight:800;margin-bottom:12px" data-t="f_pump_stop_q">Abpumpen beenden & speichern?</div>
-  <div id="pump-confirm-info" style="font-size:.85rem;color:var(--txt-m);margin-bottom:16px"></div>
-  <div style="display:flex;gap:12px;justify-content:center">
-    <button onclick="pumpStopConfirmed()" style="padding:10px 24px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--ok);color:#fff">✓ Ja, speichern</button>
-    <button onclick="el('pump-confirm').classList.remove('show')" style="padding:10px 24px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--bg2);color:var(--txt-l)">← Weiter</button>
-  </div>
-</div></div>
-<div class="mdl-o mk-confirm" id="pump-close-confirm" onclick="if(event.target===this)this.classList.remove('show')"><div class="mdl" style="background:var(--bg);border-radius:var(--r);padding:22px;width:90%;max-width:350px;margin:auto;text-align:center">
-  <div style="font-size:2rem;margin-bottom:8px">🧴</div>
-  <div style="font-weight:800;margin-bottom:12px">Abpumpen schließen?</div>
-  <div id="pump-close-info" style="font-size:.85rem;color:var(--txt-m);margin-bottom:16px"></div>
-  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-    <button onclick="pumpCloseSave()" style="padding:10px 20px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--ok);color:#fff">💾 Speichern</button>
-    <button onclick="pumpCloseDiscard()" style="padding:10px 20px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--err);color:#fff">🗑 Verwerfen</button>
-    <button onclick="el('pump-close-confirm').classList.remove('show')" style="padding:10px 20px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--bg2);color:var(--txt-l)">← Zurück</button>
-  </div>
-</div></div>
-
-<!-- ===== MILK STORAGE SCREEN ===== -->
-<div class="scr" id="scr-milk">
-  <div class="sec-t" style="margin-bottom:4px">🧊 <span data-t="mk_title">Milchlager</span></div>
-  <div style="font-size:.75rem;color:var(--txt-m);margin-bottom:14px" data-t="mk_sub">Abgepumpte Milch verwalten & Haltbarkeit tracken</div>
-
-  <!-- CDC Guidelines Card -->
-  <div style="background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--sh)">
-    <div style="font-weight:800;font-size:.85rem;margin-bottom:10px">📋 CDC Lagerrichtlinien</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;font-size:.72rem">
-      <div style="background:var(--bg2);border-radius:var(--rs);padding:10px 6px">
-        <div style="font-size:1.2rem">🌡️</div><div style="font-weight:800;color:var(--wrn)">Raumtemp.</div><div style="font-weight:800;font-size:1.1rem">4h</div><div style="color:var(--txt-m)">≤25°C</div>
-      </div>
-      <div style="background:var(--bg2);border-radius:var(--rs);padding:10px 6px">
-        <div style="font-size:1.2rem">❄️</div><div style="font-weight:800;color:var(--info)">Kühlschrank</div><div style="font-weight:800;font-size:1.1rem">4 Tage</div><div style="color:var(--txt-m)">≤4°C</div>
-      </div>
-      <div style="background:var(--bg2);border-radius:var(--rs);padding:10px 6px">
-        <div style="font-size:1.2rem">🧊</div><div style="font-weight:800;color:#6B8DD6">Tiefkühler</div><div style="font-weight:800;font-size:1.1rem">6 Mon.</div><div style="color:var(--txt-m)">≤-18°C</div>
-      </div>
-    </div>
-    <div style="font-size:.65rem;color:var(--txt-m);margin-top:6px;text-align:center">Quelle: CDC Breast Milk Storage Guidelines</div>
-  </div>
-
-  <!-- Add New Portion -->
-  <button onclick="milkAddNew()" id="mk-add-btn" style="width:100%;padding:14px;border:2px dashed var(--brd);border-radius:var(--r);background:transparent;font-family:Nunito;font-weight:800;font-size:.85rem;cursor:pointer;color:var(--prim);margin-bottom:14px">+ Neue Milchportion hinzufügen</button>
-
-  <!-- Add Form -->
-  <div id="mk-form" style="display:none;background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--sh)">
-    <div style="font-weight:800;font-size:.85rem;margin-bottom:12px">🆕 Neue Portion</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-      <div><label class="fl">Menge (ml)</label><input type="number" id="mk-ml" placeholder="120" style="width:100%;padding:8px 10px;border-radius:var(--rs);border:1.5px solid var(--brd);font-family:Nunito;font-size:.85rem"></div>
-      <div><label class="fl">Datum & Zeit</label><input type="datetime-local" id="mk-dt" style="width:100%;padding:8px 10px;border-radius:var(--rs);border:1.5px solid var(--brd);font-family:Nunito;font-size:.85rem"></div>
-    </div>
-    <div style="margin-bottom:10px"><label class="fl">Lagerort</label>
-      <div class="pills" id="pi-mks"><div class="pill sel" data-v="fridge" onclick="sp(this)">❄️ Kühlschrank</div><div class="pill" data-v="freezer" onclick="sp(this)">🧊 Tiefkühler</div><div class="pill" data-v="room" onclick="sp(this)">🌡️ Raum</div></div>
-    </div>
-    <div style="margin-bottom:12px"><label class="fl">Notiz (optional)</label><input type="text" id="mk-note" placeholder="z.B. Morgens, nach dem Füttern" style="width:100%;padding:8px 10px;border-radius:var(--rs);border:1.5px solid var(--brd);font-family:Nunito;font-size:.85rem"></div>
-    <div style="display:flex;gap:10px">
-      <button onclick="milkSaveNew()" style="flex:1;padding:10px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--ok);color:#fff">💾 Speichern & Code generieren</button>
-      <button onclick="el('mk-form').style.display='none';el('mk-add-btn').style.display=''" style="padding:10px 16px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--bg2);color:var(--txt-l)">✕</button>
-    </div>
-  </div>
-
-  <!-- Milk Inventory -->
-  <div id="mk-list"></div>
-  <div id="mk-empty" style="text-align:center;padding:30px 20px;color:var(--txt-m)">
-    <div style="font-size:2.5rem;margin-bottom:8px">🧴</div>
-    <div style="font-weight:800;font-size:.9rem">Noch keine Milch gelagert</div>
-    <div style="font-size:.75rem;margin-top:4px">Pumpe ab und tracke die Haltbarkeit!</div>
-  </div>
-</div>
-
-<!-- ===== SOUNDS ===== -->
-<div class="scr" id="scr-sounds">
-  <div class="sec-t" style="margin-bottom:16px" data-t="snd_title">🎵 Schlafgeräusche</div>
-  <div class="np" id="np"><div class="np-vis"><div class="np-rg an"></div><div class="np-rg an"></div><div class="np-rg an"></div><div class="np-ic" id="np-ic">🌧️</div></div>
-    <div class="np-tt" id="np-tt">-</div><div class="np-sb" id="np-sb">-</div>
-    <div class="np-ct"><button class="np-bt" onclick="stopSnd()">⏹️</button><button class="np-bt pl" id="np-pl" onclick="togPause()">⏸️</button><button class="np-bt" onclick="sndTimer()">⏱️</button></div>
-    <div class="np-timer" id="np-tmr"></div></div>
-  <div class="sg" id="sgrid"></div>
-</div>
-
-<!-- ===== TRENDS ===== -->
-<div class="scr" id="scr-trends">
-  <div class="sec-t" style="margin-bottom:16px" data-t="tr_title">📈 Trends >📈 Trends & Statistiken< Statistiken</div>
-  <div class="stg">
-    <div class="stc"><div class="st-v" id="s-tot">--</div><div class="st-l" data-t="tr_total_today">Gesamtschlaf heute</div></div>
-    <div class="stc"><div class="st-v" id="s-nap">--</div><div class="st-l" data-t="tr_naps_today">Nickerchen heute</div></div>
-    <div class="stc"><div class="st-v" id="s-ww">--</div><div class="st-l" data-t="tr_avg">∅ Wachfenster</div></div>
-    <div class="stc"><div class="st-v" id="s-nwk">--</div><div class="st-l" data-t="tr_long">Längster Schlaf</div></div>
-  </div>
-  <div class="chc"><div class="ch-t" data-t="tr_s7">Schlaf der letzten 7 Tage</div><div class="ch-a"><div class="bc" id="wch"></div></div>
-    <div class="lg"><div class="lgi"><div class="lgd" style="background:var(--slp)"></div>Schlaf</div><div class="lgi"><div class="lgd" style="background:var(--wak)"></div>Wach</div></div></div>
-  <div class="chc"><div class="ch-t" data-t="tr_ww">Wachfenster-Entwicklung</div><div class="ch-a"><canvas id="wcv"></canvas></div></div>
-  <div class="chc"><div class="ch-t" data-t="tr_nw">Nacht-Aufwachen (7 Tage)</div><div class="ch-a"><canvas id="nwcv"></canvas></div></div>
-  <div class="chc"><div class="ch-t" data-t="tr_algo">🧠 Algorithmus</div><div style="font-size:.82rem;color:var(--txt-l);line-height:1.6" id="algo-i"></div></div>
-  <div class="chc"><div class="ch-t" data-t="algo_info">Algorithmus-Info</div>
-    <div style="font-size:.85rem;color:var(--txt-l);line-height:1.6" id="algo-i"></div></div>
-</div>
-
-<!-- ===== COURSE ===== -->
-<div class="scr" id="scr-course">
-  <div class="sec-t" style="margin-bottom:8px">📚 Schlafkurs</div>
-  <div style="font-size:.85rem;color:var(--txt-l);margin-bottom:16px;line-height:1.5">14-Tage Baby-Schlaf-Guide – wissenschaftlich fundiert, bindungsorientiert.</div>
-  <div class="crs-pg"><div class="crs-pg-label" id="cpg-lb" data-t="co_prog">0 von 8 Kapiteln abgeschlossen</div><div class="crs-pg-bar"><div class="crs-pg-fill" id="cpg-fl" style="width:0%"></div></div></div>
-  <div id="crs-list"></div>
-</div>
-
-<!-- ===== SETTINGS ===== -->
-<div class="scr" id="scr-settings">
-  <div class="sec-t" style="margin-bottom:16px" data-t="s_title">⚙️ Einstellungen</div>
-  <div style="margin-bottom:20px">
-    <div class="set-i" onclick="editName()" style="cursor:pointer"><div><div class="set-lb" data-t="s_babyname">Baby Name</div><div class="set-vl" id="s-nm">--</div></div><span style="color:var(--txt-m)">✏️</span></div>
-    <div class="set-i" onclick="editBday()" style="cursor:pointer"><div><div class="set-lb" data-t="s_bday">Geburtsdatum</div><div class="set-vl" id="s-bd">--</div></div><span style="color:var(--txt-m)">✏️</span></div>
-    <div class="set-i"><div><div class="set-lb" data-t="s_age">Alter</div><div class="set-vl" id="s-ag">--</div></div></div>
-    <div class="set-i"><div><div class="set-lb" data-t="s_algophase">Algorithmus-Phase</div><div class="set-vl" id="s-ph" data-t="s_starttrack">Starte Tracking</div></div></div>
-    <div class="set-i" onclick="addChild()" style="cursor:pointer"><div class="set-lb" data-t="s_addchild">👶 Weiteres Kind hinzufügen</div><span style="color:var(--txt-m)">➕</span></div>
-  </div>
-  <div style="margin-bottom:20px">
-    <div class="sec-t" data-t="s_notif">Benachrichtigungen</div>
-    <div class="set-i"><div class="set-lb" data-t="s_night">Nachtmodus</div><button class="toggle" id="tog-night" onclick="toggleNight()"></button></div>
-<div class="set-i"><div class="set-lb" data-t="s_push">Push-Notifications</div><button class="toggle" id="tog-notif" onclick="enableNotif()"></button></div>
-    <div class="set-i"><div class="set-lb" data-t="s_lead">Vorlauf (Minuten)</div><div class="set-vl">30</div></div>
-    <div class="set-i" onclick="openLangPicker()" style="cursor:pointer"><div class="set-lb" data-t="s_lang">🌍 Sprache</div><div class="set-vl" id="lang-sel">🇦🇹 Deutsch</div></div>
-  </div>
-  <div style="margin-bottom:20px">
-    <div class="sec-t"><span data-t="s_sync">👨‍👩‍👧 Familien-Sync</span></div>
-    <div id="sync-off" style="display:block">
-      <div style="background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:8px">
-        <div style="font-weight:700;margin-bottom:8px">Daten mit Partner teilen</div>
-        <div style="font-size:.85rem;color:var(--txt-m);margin-bottom:12px" data-t="sy_sub">Erstelle einen Familien-Code oder tritt einer Familie bei. Beide Elternteile sehen dieselben Daten.</div>
-        <button class="sbtn" onclick="createFamily()" style="margin-bottom:8px">🏠 Familie erstellen</button>
-        <div style="display:flex;gap:8px">
-          <input type="text" id="join-code" class="fi" placeholder="Code eingeben" maxlength="6" style="text-transform:uppercase;letter-spacing:3px;text-align:center;font-size:1.2rem">
-          <button class="sbtn" onclick="joinFamily()" style="width:auto;padding:16px 24px;white-space:nowrap">Beitreten</button>
-        </div>
-      </div>
-    </div>
-    <div id="sync-on" style="display:none">
-      <div style="background:var(--card);border:1px solid var(--brd);border-radius:var(--r);padding:16px;margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-weight:700;color:var(--ok)">✅ Verbunden</div>
-          <div id="sync-status" style="font-size:.75rem;color:var(--txt-m)"></div>
-        </div>
-        <div style="text-align:center;margin:12px 0">
-          <div style="font-size:.75rem;color:var(--txt-m);font-weight:600">FAMILIEN-CODE</div>
-          <div id="sync-code" style="font-family:Quicksand;font-weight:800;font-size:2rem;letter-spacing:5px;color:var(--pri)"></div>
-          <button onclick="copyCode()" style="background:none;border:1px solid var(--brd);border-radius:20px;padding:4px 16px;color:var(--txt-l);font-size:.8rem;cursor:pointer;margin-top:4px">📋 Code kopieren</button>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="sbtn" onclick="syncNow()">🔄 Jetzt syncen</button>
-          <button onclick="leaveFamily()" style="background:none;border:2px solid var(--err);border-radius:var(--rs);padding:12px;color:var(--err);font-weight:700;cursor:pointer;white-space:nowrap">Trennen</button>
-        </div>
-      </div>
-      <div id="sync-info" style="font-size:.75rem;color:var(--txt-m);text-align:center;margin-top:4px"></div>
-    </div>
-  </div>
-  <div style="margin-bottom:20px">
-    <div class="sec-t" data-t="s_data">Daten</div>
-    <div class="set-i" onclick="showHistory()" style="cursor:pointer"><div class="set-lb" data-t="s_hist">📋 Alle Einträge ansehen</div><span style="color:var(--txt-m)">→</span></div>
-    <div class="set-i" onclick="exportCSV()" style="cursor:pointer"><div class="set-lb" data-t="s_csv">📥 Daten exportieren (CSV)</div></div>
-    <div class="set-i" onclick="backupData()" style="cursor:pointer"><div class="set-lb" data-t="s_backup">💾 Backup speichern (JSON)</div></div>
-    <div class="set-i" style="cursor:pointer;position:relative"><div class="set-lb" data-t="s_restore">📂 Backup laden</div><input type="file" accept=".json" onchange="restoreData(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></div>
-    <div class="set-i" onclick="shareData()" style="cursor:pointer"><div class="set-lb" data-t="s_report">📤 Bericht für Kinderarzt</div></div>
-    <div class="set-i" onclick="compactData()" style="cursor:pointer"><div class="set-lb" data-t="s_compact">🗜️ Daten komprimieren</div></div>
-    <div class="set-i" onclick="clearAll()" style="cursor:pointer"><div class="set-lb" style="color:var(--err)" data-t="s_delete">🗑️ Alle Daten löschen</div></div>
-  </div>
-  <div><div class="sec-t">Tutorial</div>
-    <div class="set-i" onclick="tutStart()" style="cursor:pointer"><div class="set-lb" data-t="s_tutorial">🎓 Tutorial wiederholen</div><div class="set-vl">→</div></div>
-  </div>
-  <div><div class="sec-t" data-t="s_feedback_t">Beta-Feedback</div>
-    <div class="set-i" onclick="openFeedback()" style="cursor:pointer"><div class="set-lb" data-t="s_feedback_btn">🐛 Bug melden / Feedback</div><div class="set-vl">→</div></div>
-  </div>
-  <div><div class="sec-t" data-t="s_info">Info</div>
-    <div class="set-i"><div class="set-lb" data-t="s_version">Version</div><div class="set-vl">1.0.0</div></div>
-    <div class="set-i"><div class="set-lb">Made with ❤️ in Austria</div><div class="set-vl">MurSolutions</div></div>
-  </div>
-</div>
-
-
-<!-- FEEDBACK MODAL -->
-<div class="mdl-o" id="fm-feedback" onclick="if(event.target===this)closeFeedback()"><div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px;max-height:85vh;overflow-y:auto">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="width:40px;height:4px;background:var(--txt-m);border-radius:2px"></div><button onclick="closeFeedback()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m);padding:4px 8px">✕</button></div>
-  <div class="mdl-t">🐛 Beta-Feedback</div>
-  <div style="margin:12px 0">
-    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <button class="fb-type act" onclick="fbType(this,'bug')" data-v="bug">🐛 Bug</button>
-      <button class="fb-type" onclick="fbType(this,'feature')" data-v="feature">💡 Idee</button>
-      <button class="fb-type" onclick="fbType(this,'ux')" data-v="ux">🎨 Design</button>
-      <button class="fb-type" onclick="fbType(this,'other')" data-v="other">💬 Sonstiges</button>
-    </div>
-    <textarea id="fb-text" rows="4" placeholder="Beschreibe den Bug oder dein Feedback..." style="width:100%;box-sizing:border-box;border:2px solid var(--brd);border-radius:var(--rs);padding:12px;font-family:Nunito;font-size:.9rem;resize:vertical;background:var(--bg)"></textarea>
-    <div style="margin:12px 0">
-      <div style="font-weight:700;font-size:.85rem;margin-bottom:8px" data-t="fb_screenshot">📸 Screenshot</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button onclick="fbAutoScreenshot()" class="fb-ss-btn" id="fb-auto-ss">📱 Auto-Screenshot</button>
-        <label class="fb-ss-btn" style="cursor:pointer">📁 Bild hochladen<input type="file" accept="image/*" onchange="fbFileUpload(event)" style="display:none" id="fb-file"></label>
-      </div>
-      <div id="fb-preview" style="margin-top:8px;display:none"><img id="fb-preview-img" style="max-width:100%;border-radius:8px;border:2px solid var(--brd)"><button onclick="fbClearImg()" style="position:relative;top:-10px;background:var(--err);color:#fff;border:none;border-radius:50%;width:24px;height:24px;font-size:.7rem;cursor:pointer">✕</button></div>
-    </div>
-    <div id="fb-device" style="background:var(--bg2);padding:10px;border-radius:var(--rs);font-size:.75rem;color:var(--txt-m);margin-bottom:12px"></div>
-    <button onclick="fbSend()" class="sbtn" id="fb-send-btn">📤 Feedback senden</button>
-    <div id="fb-status" style="text-align:center;margin-top:8px;font-size:.85rem"></div>
-  </div>
-</div></div>
-
-<!-- NURSE STOP CONFIRM -->
-<div class="mdl-o" id="nurse-confirm" onclick="if(event.target===this)document.getElementById('nurse-confirm').classList.remove('act')"><div class="mdl" style="background:var(--bg);border-radius:var(--r);padding:22px;width:90%;max-width:350px;margin:auto;text-align:center">
-  <div style="font-size:2rem;margin-bottom:8px">🤱</div>
-  <div style="font-weight:800;font-size:1rem;margin-bottom:12px" data-t="f_nurse_stop_q">Stillen wirklich beenden?</div>
-  <div id="nurse-confirm-info" style="font-size:.85rem;color:var(--txt-m);margin-bottom:16px"></div>
-  <div style="display:flex;gap:12px;justify-content:center">
-    <button onclick="nurseStopConfirmed()" style="padding:10px 24px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--ok);color:#fff" data-t="f_nurse_stop_yes">✓ Ja, beenden</button>
-    <button onclick="document.getElementById('nurse-confirm').classList.remove('act')" style="padding:10px 24px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--bg2);color:var(--txt-l)" data-t="f_nurse_stop_no">← Weiter stillen</button>
-  </div>
-</div></div>
-
-
-<div class="mdl-o" id="nurse-close-confirm" onclick="if(event.target===this)document.getElementById('nurse-close-confirm').classList.remove('act')"><div class="mdl" style="background:var(--bg);border-radius:var(--r);padding:22px;width:90%;max-width:350px;margin:auto;text-align:center">
-  <div style="font-size:2rem;margin-bottom:8px">🤱</div>
-  <div style="font-weight:800;font-size:1rem;margin-bottom:12px" data-t="f_nurse_close_q">Stillen schließen?</div>
-  <div id="nurse-close-info" style="font-size:.85rem;color:var(--txt-m);margin-bottom:16px"></div>
-  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-    <button onclick="nurseCloseSave()" style="padding:10px 20px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--ok);color:#fff" data-t="f_nurse_close_save">💾 Speichern & Schließen</button>
-    <button onclick="nurseCloseDiscard()" style="padding:10px 20px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--err);color:#fff" data-t="f_nurse_close_discard">🗑 Verwerfen</button>
-    <button onclick="document.getElementById('nurse-close-confirm').classList.remove('act')" style="padding:10px 20px;border:none;border-radius:var(--rs);font-weight:800;cursor:pointer;background:var(--bg2);color:var(--txt-l)" data-t="f_nurse_close_cancel">← Zurück</button>
-  </div>
-</div></div>
-
-<!-- NURSE MINI-PILL (shown when nursing timer minimized) -->
-<div id="nurse-mini" style="display:none;position:fixed;bottom:72px;left:50%;transform:translateX(-50%);z-index:999;background:linear-gradient(135deg,#ff6b9d,#c44dff);color:#fff;border-radius:50px;padding:8px 18px;font-size:.85rem;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(196,77,255,.4);animation:nursePulse 2s infinite;white-space:nowrap;font-family:Nunito,sans-serif" onclick="nurseRestore()">
-  <span>🤱</span> <span id="nurse-mini-time">00:00</span> <span id="nurse-mini-side" style="opacity:.8;font-size:.75rem"></span> <span style="margin-left:6px;font-size:.7rem;opacity:.7">▲</span>
-</div>
-<style>@keyframes nursePulse{0%,100%{box-shadow:0 4px 18px rgba(196,77,255,.4)}50%{box-shadow:0 4px 24px rgba(196,77,255,.7)}}</style>
-
-<!-- BOTTOM NAV -->
-<div class="bnav"><div class="bnav-in">
-  <button class="ni act" data-s="home" onclick="nav('home')"><span class="nii">🏠</span><span class="nil" data-t="nav_home">Home</span></button>
-  <button class="ni" data-s="today" onclick="nav('today')"><span class="nii">📅</span><span class="nil" data-t="nav_today">Tagebuch</span></button>
-  <button class="ni" data-s="sounds" onclick="nav('sounds')"><span class="nii">🎵</span><span class="nil" data-t="nav_sounds">Sounds</span></button>
-  <button class="ni" data-s="milk" onclick="nav('milk');milkRender()"><span class="nii">🧴</span><span class="nil" data-t="nav_milk">Milch</span></button>
-  <button class="ni" data-s="course" onclick="nav('course')"><span class="nii">📚</span><span class="nil" data-t="nav_course">Kurs</span></button>
-  <button class="ni" data-s="trends" onclick="nav('trends')"><span class="nii">📈</span><span class="nil" data-t="nav_trends">Trends</span></button>
-  <button class="ni" data-s="settings" onclick="nav('settings')"><span class="nii">⚙️</span><span class="nil" data-t="nav_more">Mehr</span></button>
-</div></div>
-
-<!-- Night Wake Modal -->
-<div class="mdl-o" id="nw-modal" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.4);align-items:flex-end;justify-content:center"><div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="width:40px;height:4px;background:var(--txt-m);border-radius:2px"></div><button onclick="event.stopPropagation();closeForm()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m);padding:4px 8px">✕</button></div><div class="mdl-t" data-t="f_night_t">🌙 Nächtliches Aufwachen</div>
-<div class="fg"><label class="fl" data-t="f_dur_wake" data-t="f_dur_wake">Dauer wach (Min)</label><input class="fi" type="number" id="nwm-d" placeholder="15" value="15"></div>
-<div class="fg"><label class="fl" data-t="f_reason">Grund</label><div class="pills" id="pi-nwm"><div class="pill sel" data-v="hunger" onclick="sp(this)" data-t="nw_hunger">🍼 Hunger</div><div class="pill" data-v="comfort" onclick="sp(this)" data-t="nw_comfort">🤗 Trost</div><div class="pill" data-v="diaper" onclick="sp(this)" data-t="nw_diaper">🧷 Windel</div><div class="pill" data-v="unknown" onclick="sp(this)">❓</div></div></div>
-<button class="sbtn" onclick="saveNwModal()" data-t="f_save">💾 Speichern</button></div></div>
-<!-- HISTORY MODAL -->
-<div class="mdl-o" id="history-modal" onclick="if(event.target===this)this.classList.remove('act')" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.4);align-items:flex-end;justify-content:center">
-<div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-    <div class="mdl-t" style="margin:0" data-t="hi_t">📋 Alle Einträge</div>
-    <button onclick="el('history-modal').classList.remove('act')" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m)">✕</button>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-    <button class="pill sel" onclick="filterHist('all',this)">Alle</button>
-    <button class="pill" onclick="filterHist('sleep',this)">😴</button>
-    <button class="pill" onclick="filterHist('feed',this)">🍼</button>
-    <button class="pill" onclick="filterHist('diaper',this)">🧷</button>
-    <button class="pill" onclick="filterHist('nightwake',this)">🌙</button>
-    <button class="pill" onclick="filterHist('note',this)">📝</button>
-  </div>
-  <div id="hist-count" style="font-size:.75rem;color:var(--txt-m);margin-bottom:8px"></div>
-  <div id="hist-list"></div>
-</div></div>
-
-<script>
 // ===== I18N =====
 const LANGS=[
 {code:'de',flag:'🇦🇹',name:'Deutsch'},{code:'en',flag:'🇬🇧',name:'English'},
@@ -1004,8 +196,12 @@ function getCourse(){return [
 // ===== HELPERS =====
 const p2=n=>n.toString().padStart(2,'0');
 const now2=()=>{const n=new Date();return p2(n.getHours())+':'+p2(n.getMinutes())};
+const today2=()=>{const n=new Date();return n.getFullYear()+'-'+p2(n.getMonth()+1)+'-'+p2(n.getDate())};
+function dateFromInputs(dateId,timeId){const dv=el(dateId).value,tv=el(timeId).value;if(!tv)return null;const[h,m]=tv.split(':').map(Number);const d=dv?new Date(dv+'T00:00:00'):new Date();d.setHours(h,m,0,0);return d}
 const C=()=>S.children[S.activeChild]||null;
-function load(){try{const d=localStorage.getItem('bs3');if(d)S={...S,...JSON.parse(d)}}catch(e){}}
+function load(){try{const d=localStorage.getItem('bs3');if(d)S={...S,...JSON.parse(d)};
+  // Restore deleted IDs from separate storage (survives main data changes)
+  try{const del=localStorage.getItem('bs3_deleted');if(del){const saved=JSON.parse(del);if(!S._deletedIds)S._deletedIds=[];const existing=new Set(S._deletedIds.map(d=>d.id));saved.forEach(d=>{if(!existing.has(d.id))S._deletedIds.push(d)})}}catch(e){}}catch(e){}}
 function save(){try{localStorage.setItem('bs3',JSON.stringify(S))}catch(e){}if(syncState())clearTimeout(window._syncDebounce),window._syncDebounce=setTimeout(()=>syncNow(true),2000)}
 function toast(m){const t=el('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 
@@ -1418,7 +614,7 @@ function showTrack(t){openForm(t)}
 // ===== TRACKING FORMS =====
 function closeForms(){document.querySelectorAll('.mdl-o').forEach(m=>m.classList.remove('act'))}
 function closeForm(){closeForms()}
-function openForm(type){closeForms();const m=el('fm-'+type);m.classList.add('act');m.querySelectorAll('input[type=time]').forEach(i=>i.value=now2())}
+function openForm(type){closeForms();const m=el('fm-'+type);m.classList.add('act');m.querySelectorAll('input[type=time]').forEach(i=>i.value=now2());m.querySelectorAll('input[type=date]').forEach(i=>i.value=today2())}
 function selCat(c,elem){openForm(c)}
 function sp(elem){elem.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('sel'));elem.classList.add('sel')}
 function gp(id){return document.querySelector(`#${id} .pill.sel`)?.dataset.v}
@@ -1428,22 +624,22 @@ function saveSl(){
   const s=el('sl-s').value,e=el('sl-e').value;
   if(!s||!e){toast('⚠️ Zeiten eingeben!');return}
   const[sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number);
-  const d=new Date();d.setHours(sh,sm,0,0);let dur=(eh*60+em)-(sh*60+sm);if(dur<0)dur+=1440;
+  const dv=el('sl-d').value;const d=dv?new Date(dv+'T00:00:00'):new Date();d.setHours(sh,sm,0,0);let dur=(eh*60+em)-(sh*60+sm);if(dur<0)dur+=1440;
   c.entries.push({type:'sleep',sub:gp('pi-slt')||'nap',ts:d.getTime(),dur,id:Date.now().toString()});
   save();updateAll();closeForms();toast('😴 '+t('t_saved'));schedNotif()}
 function saveFd(){
-  const c=C();if(!c)return;const t=el('fd-t').value;if(!t){toast('⚠️ '+t('t_fill'));return}
-  const[h,m]=t.split(':').map(Number);const d=new Date();d.setHours(h,m,0,0);
+  const c=C();if(!c)return;const tv=el('fd-t').value;if(!tv){toast('⚠️ '+t('t_fill'));return}
+  const d=dateFromInputs('fd-d','fd-t');
   c.entries.push({type:'feed',sub:gp('pi-fdt')||'bottle',ts:d.getTime(),ml:parseInt(el('fd-ml').value)||0,id:Date.now().toString()});
   save();updateAll();closeForms();toast('🍼 '+t('t_saved'))}
 function saveDp(){
-  const c=C();if(!c)return;const t=el('dp-t').value;if(!t){toast('⚠️ '+t('t_fill'));return}
-  const[h,m]=t.split(':').map(Number);const d=new Date();d.setHours(h,m,0,0);
+  const c=C();if(!c)return;const tv=el('dp-t').value;if(!tv){toast('⚠️ '+t('t_fill'));return}
+  const d=dateFromInputs('dp-d','dp-t');
   c.entries.push({type:'diaper',sub:gp('pi-dpt')||'wet',ts:d.getTime(),id:Date.now().toString()});
   save();updateAll();closeForms();toast('🧷 '+t('t_saved'))}
 function saveNw(){
-  const c=C();if(!c)return;const t=el('nw-t').value;if(!t){toast('⚠️ '+t('t_fill'));return}
-  const[h,m]=t.split(':').map(Number);const d=new Date();d.setHours(h,m,0,0);
+  const c=C();if(!c)return;const tv=el('nw-t').value;if(!tv){toast('⚠️ '+t('t_fill'));return}
+  const d=dateFromInputs('nw-dt','nw-t');
   c.entries.push({type:'nightwake',sub:gp('pi-nwr')||'unknown',ts:d.getTime(),dur:parseInt(el('nw-d').value)||15,id:Date.now().toString()});
   save();updateAll();closeForms();toast('🌙 '+t('t_saved'))}
 function saveNwModal(){
@@ -1451,9 +647,9 @@ function saveNwModal(){
   c.entries.push({type:'nightwake',sub:gp('pi-nwm')||'unknown',ts:Date.now(),dur:parseInt(el('nwm-d').value)||15,id:Date.now().toString()});
   el('nw-modal').classList.remove('act');save();updateAll();toast('🌙 '+t('t_saved'))}
 function saveNt(){
-  const c=C();if(!c)return;const t=el('nt-t').value,tx=el('nt-tx').value;
-  if(!t||!tx){toast(t('t_fill'));return}
-  const[h,m]=t.split(':').map(Number);const d=new Date();d.setHours(h,m,0,0);
+  const c=C();if(!c)return;const tv=el('nt-t').value,tx=el('nt-tx').value;
+  if(!tv||!tx){toast(t('t_fill'));return}
+  const d=dateFromInputs('nt-d','nt-t');
   c.entries.push({type:'note',text:tx,ts:d.getTime(),id:Date.now().toString()});
   save();updateAll();closeForms();toast('📝 '+t('t_saved'))}
 
@@ -2186,7 +1382,16 @@ function renderTL(){
     note:e=>e.text||t('tl_note'),nightwake:e=>`${t('tl_nw')} (${({hunger:t('f_hunger'),diaper:t('h_diaper'),comfort:t('f_comfort')}[e.sub])||'?'})`};
   tl2.innerHTML=dayEntries.map(e=>{const t=new Date(e.ts);const ts=p2(t.getHours())+':'+p2(t.getMinutes());const ds=e.dur?` · ${e.dur} Min`:'';const ms=e.ml?` · ${e.ml}ml`:'';
     return`<div class="tli"><div class="tl-ic ${cls[e.type]||'nt'}">${ic[e.type]||'📝'}</div><div class="tl-nf"><div class="tl-tt">${(lb[e.type]||lb.note)(e)}</div><div class="tl-tm">${ts}${ds}${ms}</div></div><button class="tl-del" onclick="delE('${e.id}')">✕</button></div>`}).join('')}
-function delE(id){if(!confirm(t('t_del')))return;const c=C();if(!c)return;c.entries=c.entries.filter(e=>e.id!==id);save();updateAll()}
+function delE(id){if(!confirm(t('t_del')))return;const c=C();if(!c)return;c.entries=c.entries.filter(e=>e.id!==id);
+  // Track deleted IDs for sync (prevents re-appearing entries)
+  if(!S._deletedIds)S._deletedIds=[];
+  S._deletedIds.push({id,ts:Date.now()});
+  // Cleanup: keep only last 90 days of deleted IDs
+  const cutoff90d=Date.now()-90*864e5;
+  S._deletedIds=S._deletedIds.filter(d=>d.ts>cutoff90d);
+  // Also persist deleted IDs separately so they survive cache clears
+  try{localStorage.setItem('bs3_deleted',JSON.stringify(S._deletedIds))}catch(e){}
+  save();updateAll()}
 
 // ===== SOUNDS =====
 let actx=null,srcNode=null,sndTimerInt=null,sndTimerEnd=null;
@@ -2609,11 +1814,13 @@ async function syncNow(silent){
   try{
     if(!silent)el('sync-status').textContent='⏳ Synce...';
     const c=C();
-    // Push local data
+    // Push local data + deleted entries as tombstones
     const entries=(c?.entries||[]).map(e=>({...e,_ts:Math.floor((e.ts||Date.now())/1000)}));
+    const deletedEntries=(S._deletedIds||[]).map(d=>({id:d.id,_deleted:true,_ts:Math.floor(d.ts/1000)}));
+    const allEntries=[...entries,...deletedEntries];
     const babies=JSON.parse(localStorage.getItem('bs3'))||[];
     await fetch(SYNC_API+'/api/sync/push',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({code:st.code,device_id:deviceId(),babies:Array.isArray(babies)?babies:[babies],entries})});
+      body:JSON.stringify({code:st.code,device_id:deviceId(),babies:Array.isArray(babies)?babies:[babies],entries:allEntries})});
     // Pull remote data
     const pr=await fetch(SYNC_API+'/api/sync/pull',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({code:st.code,since:st.lastSync||0})});
@@ -2622,10 +1829,20 @@ async function syncNow(silent){
     if(pd.ok&&pd.entries.length>0){
       const local=c?.entries||[];
       const map=new Map(local.map(e=>[e.id,e]));
-      pd.entries.forEach(e=>{if(e._deleted)map.delete(e.id);else if(!map.has(e.id)||e.ts>map.get(e.id).ts){map.set(e.id,e);merged++}});
+      // Build set of locally deleted IDs to prevent re-sync
+      const deletedSet=new Set((S._deletedIds||[]).map(d=>d.id));
+      pd.entries.forEach(e=>{
+        if(e._deleted){map.delete(e.id);deletedSet.add(e.id);
+          // Also track remotely deleted entries locally
+          if(!S._deletedIds)S._deletedIds=[];
+          if(!(S._deletedIds||[]).find(d=>d.id===e.id))S._deletedIds.push({id:e.id,ts:Date.now()})}
+        else if(deletedSet.has(e.id)){/* skip - locally or remotely deleted */}
+        else if(!map.has(e.id)||e.ts>map.get(e.id).ts){map.set(e.id,e);merged++}
+      });
       if(c){c.entries=[...map.values()];
         // Save without triggering sync again
-        try{localStorage.setItem('bs3',JSON.stringify(S))}catch(e){}
+        try{localStorage.setItem('bs3',JSON.stringify(S));
+          localStorage.setItem('bs3_deleted',JSON.stringify(S._deletedIds||[]))}catch(e){}
         updateAll()}
     }
     if(pd.devices){pd.devices.forEach(dev=>{if(dev.device_id===deviceId())return})}
@@ -2700,28 +1917,3 @@ function initLang(){
 }
 function openLangPicker(){const m=el('fm-lang');if(m){m.classList.add('act');initLang()}}
 init();
-</script>
-<!-- LANGUAGE PICKER MODAL -->
-<div class="mdl-o" id="fm-lang" onclick="if(event.target===this)closeForm()"><div class="mdl" style="background:var(--bg);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="mdl-t">🌍 Language</div><button onclick="event.stopPropagation();closeForm()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--txt-m);padding:4px 8px">✕</button></div>
-<div id="lang-list" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px"></div>
-</div></div>
-
-<!-- TUTORIAL WALKTHROUGH -->
-<div id="tut-overlay">
-  <div id="tut-spotlight"></div>
-  <div id="tut-card" class="arrow-top">
-    <div id="tut-emoji"></div>
-    <div id="tut-title"></div>
-    <div id="tut-text"></div>
-    <div id="tut-step"></div>
-    <div id="tut-dots"></div>
-    <div id="tut-btns">
-      <button id="tut-skip" onclick="tutSkip()"></button>
-      <button id="tut-back" onclick="tutNav(-1)" style="display:none"></button>
-      <button id="tut-next" onclick="tutNav(1)"></button>
-    </div>
-  </div>
-</div>
-</body>
-</html>
